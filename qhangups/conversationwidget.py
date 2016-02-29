@@ -100,7 +100,6 @@ class QHangupsConversationWidget(QtWidgets.QWidget, Ui_QHangupsConversationWidge
         self.messagesWebView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.messagesWebView.page().setLinkDelegationPolicy(QtWebKitWidgets.QWebPage.DelegateAllLinks)
         #self.messagesWebView.settings().setAttribute(QtWebKit.QWebSettings.LocalContentCanAccessRemoteUrls, True)
-        lightness = self.messagesWebView.palette().color(QtGui.QPalette.Background).lightnessF()
         self.messagesWebView.setHtml(
             """<!doctype html>
             <html lang="en">
@@ -108,16 +107,18 @@ class QHangupsConversationWidget(QtWidgets.QWidget, Ui_QHangupsConversationWidge
                 <meta charset="utf-8">
                 <title>Messages</title>
                 <style>
-                    html { font-family: sans-serif; font-size: 10pt;"""
-            + ("color: white;" if lightness < 0.2 else "")
-            + """}
-                    div.message { margin-bottom: 1em; }
+                    html {{ font-family: sans-serif; font-size: 10pt; color : {0}; }}
+                    a:link {{ font-family: sans-serif; font-size: 10pt; color : {1}; }}
+                    div.message {{ margin-bottom: 1em; }}
                 </style>
             </head>
             <body>
                 <div id="messages"></div>
             </body>
-            </html>"""
+            </html>""".format(
+                self.messagesWebView.palette().text().color().name(),
+                self.messagesWebView.palette().link().color().name()
+                )
         )
 
     def add_message(self, timestamp, text, username=None, user_id=None, message_id=None, prepend=False):
